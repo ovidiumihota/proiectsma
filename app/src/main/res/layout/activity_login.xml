@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:padding="10dp"
+    android:background="@drawable/login_background">
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:minHeight="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="125dp"
+        android:id="@+id/logo"
+        android:background="@drawable/logo"
+        android:layout_marginTop="63dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:id="@+id/play_button"
+        android:background="@drawable/play_button"
+        android:onClick="startGame"
+        android:clickable="true"
+        android:layout_marginTop="109dp"
+        android:layout_below="@+id/logo"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:id="@+id/instruction_button"
+        android:onClick="instructions"
+        android:background="@drawable/instruction_button"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/play_button"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:id="@+id/photos_button"
+        android:onClick="myPictures"
+        android:background="@drawable/instruction_button"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/instruction_button"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorError"
+        android:id="@+id/loginFirstPlease"
+        android:layout_above="@+id/login_button"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>

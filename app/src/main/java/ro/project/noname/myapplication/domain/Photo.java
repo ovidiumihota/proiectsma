@@ -8,6 +8,10 @@ public class Photo {
     private String url;
     private int totalLikes;
 
+    public Photo(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }

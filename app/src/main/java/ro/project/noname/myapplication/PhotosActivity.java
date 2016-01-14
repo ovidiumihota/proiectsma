@@ -1,16 +1,10 @@
 package ro.project.noname.myapplication;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.facebook.AccessToken;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -20,18 +14,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import ro.project.noname.myapplication.domain.Photo;
 
 public class PhotosActivity extends AppCompatActivity {
 
-    private Map<String, Photo> photos = new HashMap<>();
+    private List<Photo> photos = new ArrayList<>();
+    private PhotosAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,15 +66,11 @@ public class PhotosActivity extends AppCompatActivity {
 
         albumGraphRequest.executeAsync();
 
-        ListView listView = (ListView)findViewById(R.id.photo_list);
-        HashMapAdapter adapter = new HashMapAdapter(PhotosActivity.this,getPhotos());
+        ListView listView = (ListView) findViewById(R.id.photo_list);
+        adapter = new PhotosAdapter(PhotosActivity.this, photos);
         listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
-    private Map<String,Photo> getPhotos(){
-        return photos;
-    }
 
     private void getPhotosByAlbumId(String id) {
 
@@ -102,7 +91,7 @@ public class PhotosActivity extends AppCompatActivity {
                             try {
                                 JSONArray dataJsonArray = new JSONArray(responseJSONObject.getString("data"));
                                 for (int i = 0; i < dataJsonArray.length(); i++) {
-                                    getPhotoById(dataJsonArray.getJSONObject(i).getString("id"));
+                                    getPhotoById(dataJsonArray.getJSONObject(i).getString("id"), i);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -116,12 +105,13 @@ public class PhotosActivity extends AppCompatActivity {
         albumGraphRequest.executeAsync();
     }
 
-    private void getPhotoById(String id) {
-        getLikes(id);
-        getUrl(id);
+    private void getPhotoById(String id, final int index) {
+        photos.add(index, new Photo(id));
+        getLikes(id, index);
+        getUrl(id, index);
     }
 
-    private void getUrl(final String id) {
+    private void getUrl(final String id, final int index) {
         Bundle albumParameters = new Bundle();
         albumParameters.putString("fields", "url");
         albumParameters.putBoolean("redirect", false);
@@ -138,12 +128,10 @@ public class PhotosActivity extends AppCompatActivity {
 
                             try {
                                 String picUrlString = (String) response.getJSONObject().getJSONObject("data").get("url");
-                                Photo photo = photos.get(id);
-                                if (photo == null) {
-                                    photo = new Photo();
-                                }
+                                Photo photo = photos.get(index);
                                 photo.setUrl(picUrlString);
-                                photos.put(id, photo);
+                                photos.set(index, photo);
+                                adapter.notifyDataSetChanged();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -156,7 +144,7 @@ public class PhotosActivity extends AppCompatActivity {
         albumGraphRequest.executeAsync();
     }
 
-    private void getLikes(final String id) {
+    private void getLikes(final String id, final int index) {
         Bundle albumParameters = new Bundle();
         albumParameters.putString("fields", "id");
         albumParameters.putString("summary", "true");
@@ -173,12 +161,10 @@ public class PhotosActivity extends AppCompatActivity {
                             JSONObject responseJSONObject = response.getJSONObject();
                             try {
                                 JSONObject summaryJsonObject = new JSONObject(responseJSONObject.getString("summary"));
-                                Photo photo = photos.get(id);
-                                if (photo == null) {
-                                    photo = new Photo();
-                                }
-                                photo.setTotalLikes(summaryJsonObject.getInt("total_likes"));
-                                photos.put(id, photo);
+                                Photo photo = photos.get(index);
+                                photo.setTotalLikes(summaryJsonObject.getInt("total_count"));
+                                photos.set(index, photo);
+                                adapter.notifyDataSetChanged();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
